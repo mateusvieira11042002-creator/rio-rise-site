@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Rio Rise</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        header { background: #1a1a1a; padding: 20px 0; margin-bottom: 40px; }
+        header h1 { color: #53cc06; }
+        .back-btn { display: inline-block; margin-bottom: 20px; padding: 10px 20px; background: #53cc06; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .faq-item { background: #1a1a1a; margin-bottom: 20px; border-radius: 8px; overflow: hidden; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; color: #53cc06; font-weight: bold; transition: all 0.3s; }
+        .faq-question:hover { background: #2a2a2a; }
+        .faq-answer { padding: 0 20px 0 20px; max-height: 0; overflow: hidden; transition: all 0.3s; background: #0a0a0a; }
+        .faq-answer.active { max-height: 500px; padding: 20px; }
+        .faq-answer p { color: #ccc; line-height: 1.8; }
+        .toggle-icon { font-size: 20px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="back-btn">← Voltar</a>
+            <h1>Perguntas Frequentes</h1>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Como faço para comprar créditos?</span>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Acesse a página de produtos, escolha o pacote desejado, adicione ao carrinho e clique em "Ir para Pagamento". Você pode pagar via PIX ou Cartão de Crédito.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Quanto tempo para receber meus créditos?</span>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Com PIX: Instantaneamente (segundos)<br>Com Cartão: 1-2 minutos após confirmação do pagamento</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>É seguro comprar aqui?</span>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Sim! Usamos Mercado Pago como gateway de pagamento, um dos mais seguros do Brasil. Todos os dados são criptografados via SSL.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Posso pedir reembolso?</span>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Sim, você pode solicitar reembolso dentro de 30 dias da compra, desde que não tenha utilizado os créditos. Entre em contato com nosso suporte.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Como baixo e instalo o Rio Rise?</span>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Acesse a seção "Começar a Jogar", baixe o APK do instalador e siga as instruções. O arquivo será salvo em seus Downloads.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>Qual é o sistema de recomendação?</span>
+                    <span class="toggle-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Indique Rio Rise para seus amigos e receba comissão em cada compra realizada pelo seu link. Mais detalhes em nosso programa de afiliados.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; padding: 30px; background: #1a1a1a; border-radius: 8px;">
+                <p style="color: #ccc; margin-bottom: 15px;">Não encontrou sua resposta?</p>
+                <a href="mailto:suporte@riorise.com" style="display: inline-block; padding: 12px 30px; background: #53cc06; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold;">Entre em Contato</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('active');
+            const icon = element.querySelector('.toggle-icon');
+            icon.textContent = answer.classList.contains('active') ? '−' : '+';
+        }
+    </script>
+</body>
+</html>

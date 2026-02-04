@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta - Rio Rise</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background: #1a1a1a; padding: 20px 0; margin-bottom: 40px; }
+        header h1 { color: #53cc06; }
+        .back-btn { display: inline-block; margin-bottom: 20px; padding: 10px 20px; background: #53cc06; color: #000; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 30px; }
+        .sidebar { background: #1a1a1a; padding: 20px; border-radius: 8px; height: fit-content; }
+        .user-info { text-align: center; margin-bottom: 30px; }
+        .user-avatar { width: 80px; height: 80px; background: #53cc06; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .user-name { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .user-email { color: #999; font-size: 12px; }
+        .nav-menu { list-style: none; }
+        .nav-menu li { margin-bottom: 10px; }
+        .nav-menu a { display: block; padding: 12px; background: #0a0a0a; color: #ccc; text-decoration: none; border-radius: 5px; transition: all 0.3s; }
+        .nav-menu a:hover, .nav-menu a.active { background: #53cc06; color: #000; }
+        .main-content { background: #1a1a1a; padding: 30px; border-radius: 8px; }
+        .section { display: none; }
+        .section.active { display: block; }
+        h2 { color: #53cc06; margin-bottom: 20px; }
+        .balance-card { background: linear-gradient(135deg, #53cc06, #3d9207); padding: 30px; border-radius: 8px; margin-bottom: 30px; }
+        .balance-label { font-size: 14px; opacity: 0.9; }
+        .balance-amount { font-size: 36px; font-weight: bold; margin: 10px 0; }
+        .balance-btn { display: inline-block; padding: 10px 20px; background: #000; color: #53cc06; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 15px; }
+        .order-table { width: 100%; border-collapse: collapse; }
+        .order-table th { background: #0a0a0a; padding: 12px; text-align: left; color: #53cc06; }
+        .order-table td { padding: 12px; border-bottom: 1px solid #333; }
+        .order-table tr:hover { background: #0a0a0a; }
+        .status-badge { padding: 5px 10px; border-radius: 3px; font-size: 12px; font-weight: bold; }
+        .status-completed { background: #0ea700; }
+        .status-pending { background: #f36500; }
+        .logout-btn { width: 100%; padding: 12px; background: #f44; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="back-btn">← Voltar</a>
+            <h1>Minha Conta</h1>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <div class="dashboard">
+                <aside class="sidebar">
+                    <div class="user-info">
+                        <div class="user-avatar">👤</div>
+                        <div class="user-name" id="userName">Jogador Rio Rise</div>
+                        <div class="user-email" id="userEmail">usuario@riorise.com</div>
+                    </div>
+                    <ul class="nav-menu">
+                        <li><a href="#" onclick="showSection('overview', event)" class="nav-link active">Visão Geral</a></li>
+                        <li><a href="#" onclick="showSection('purchases', event)" class="nav-link">Minhas Compras</a></li>
+                        <li><a href="#" onclick="showSection('profile', event)" class="nav-link">Perfil</a></li>
+                        <li><a href="#" onclick="showSection('settings', event)" class="nav-link">Configurações</a></li>
+                    </ul>
+                    <button class="logout-btn" onclick="logout()">Sair</button>
+                </aside>
+
+                <section class="main-content">
+                    <!-- Visão Geral -->
+                    <div class="section active" id="overview">
+                        <h2>Visão Geral</h2>
+                        <div class="balance-card">
+                            <div class="balance-label">Saldo Disponível</div>
+                            <div class="balance-amount" id="totalBalance">R$ 0,00</div>
+                            <a href="index.html#recarga" class="balance-btn">+ Adicionar Saldo</a>
+                        </div>
+                        
+                        <h3 style="color: #53cc06; margin-bottom: 15px;">Últimas Compras</h3>
+                        <table class="order-table">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Valor</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrders">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #999;">Nenhuma compra realizada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Minhas Compras -->
+                    <div class="section" id="purchases">
+                        <h2>Histórico de Compras</h2>
+                        <table class="order-table">
+                            <thead>
+                                <tr>
+                                    <th>ID do Pedido</th>
+                                    <th>Produto</th>
+                                    <th>Valor</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allOrders">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #999;">Nenhuma compra realizada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Perfil -->
+                    <div class="section" id="profile">
+                        <h2>Meu Perfil</h2>
+                        <form style="max-width: 500px;">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; color: #53cc06;">Nome Completo</label>
+                                <input type="text" id="fullName" value="Jogador Rio Rise" style="width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; color: #fff; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; color: #53cc06;">Email</label>
+                                <input type="email" id="userEmailInput" value="usuario@riorise.com" style="width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; color: #fff; border-radius: 5px;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px; color: #53cc06;">Telefone</label>
+                                <input type="tel" value="" placeholder="(11) 99999-9999" style="width: 100%; padding: 10px; background: #0a0a0a; border: 1px solid #333; color: #fff; border-radius: 5px;">
+                            </div>
+                            <button type="button" onclick="saveProfile()" style="width: 100%; padding: 12px; background: #53cc06; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Salvar Alterações</button>
+                        </form>
+                    </div>
+
+                    <!-- Configurações -->
+                    <div class="section" id="settings">
+                        <h2>Configurações</h2>
+                        <div style="background: #0a0a0a; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <input type="checkbox" checked> Receber notificações por email
+                        </div>
+                        <div style="background: #0a0a0a; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <input type="checkbox" checked> Ativar autenticação de dois fatores
+                        </div>
+                        <div style="background: #0a0a0a; padding: 15px; border-radius: 5px;">
+                            <button onclick="changePassword()" style="padding: 10px 20px; background: #53cc06; color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Alterar Senha</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Carregar dados do localStorage
+        function loadUserData() {
+            const userData = JSON.parse(localStorage.getItem('rioRiseUser')) || {
+                name: 'Jogador Rio Rise',
+                email: 'usuario@riorise.com',
+                balance: 0,
+                orders: []
+            };
+            
+            document.getElementById('userName').textContent = userData.name;
+            document.getElementById('userEmail').textContent = userData.email;
+            document.getElementById('fullName').value = userData.name;
+            document.getElementById('userEmailInput').value = userData.email;
+            document.getElementById('totalBalance').textContent = 'R$ ' + (userData.balance || 0).toFixed(2);
+            
+            // Mostrar últimas compras
+            if (userData.orders && userData.orders.length > 0) {
+                const recentOrders = userData.orders.slice(-3).map(order => `
+                    <tr>
+                        <td>${order.product}</td>
+                        <td>R$ ${order.amount.toFixed(2)}</td>
+                        <td>${order.date}</td>
+                        <td><span class="status-badge status-completed">Concluído</span></td>
+                    </tr>
+                `).join('');
+                document.getElementById('recentOrders').innerHTML = recentOrders;
+            }
+        }
+
+        function showSection(sectionId, e) {
+            e.preventDefault();
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(a => a.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            e.target.classList.add('active');
+        }
+
+        function saveProfile() {
+            alert('Perfil atualizado com sucesso!');
+        }
+
+        function changePassword() {
+            alert('Um link para redefinir sua senha foi enviado para seu email.');
+        }
+
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                localStorage.removeItem('isLoggedIn');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Carregar dados ao abrir a página
+        window.addEventListener('load', loadUserData);
+    </script>
+</body>
+</html>

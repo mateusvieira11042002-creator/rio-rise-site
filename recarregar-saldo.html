@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recarregar Saldo | Rio Rise - Simulador de Vida Brasil</title>
+    <style>
+        :root {
+            --accent: #53cc06;
+            --primary: #000;
+            --secondary: #1a1a1a;
+            --text: #fff;
+            --border: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-back {
+            padding: 8px 16px;
+            background-color: var(--secondary);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-back:hover {
+            background-color: var(--border);
+            color: var(--accent);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            color: #999;
+        }
+
+        .store-section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--accent), transparent);
+            border-radius: 2px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, var(--secondary) 0%, #252525 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(83, 204, 6, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .product-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(83, 204, 6, 0.2);
+        }
+
+        .product-card:hover::before {
+            left: 100%;
+        }
+
+        .product-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .product-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .product-label {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #ddd;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-description {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 15px;
+            min-height: 40px;
+            line-height: 1.4;
+        }
+
+        .product-price {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .product-benefits {
+            background-color: rgba(83, 204, 6, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #ccc;
+            text-align: left;
+        }
+
+        .product-benefits li {
+            margin-bottom: 6px;
+            padding-left: 10px;
+        }
+
+        .product-benefits li:last-child {
+            margin-bottom: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: var(--accent);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .btn-buy {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, var(--accent), #3d9207);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn-buy:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(83, 204, 6, 0.4);
+        }
+
+        .btn-buy:active {
+            transform: translateY(-1px);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background-color: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        .payment-methods {
+            background-color: var(--secondary);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        .payment-methods h3 {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .payment-option {
+            background-color: var(--primary);
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-option:hover {
+            border-color: var(--accent);
+            background-color: rgba(83, 204, 6, 0.05);
+        }
+
+        .payment-option-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .payment-option-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .payment-option-desc {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(83, 204, 6, 0.1), rgba(83, 204, 6, 0.05));
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h4 {
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .info-box p {
+            font-size: 14px;
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        .featured {
+            position: relative;
+        }
+
+        .featured .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .featured .product-card {
+            border: 2px solid var(--accent);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 32px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 15px;
+            }
+
+            .filter-buttons {
+                justify-content: flex-start;
+            }
+
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">🚗 Rio Rise</a>
+            <div class="nav-buttons">
+                <a href="minha-conta.html" class="btn-back">👤 Minha Conta</a>
+                <a href="index.html" class="btn-back">← Voltar</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>💰 Recarregar Saldo</h1>
+            <p>Escolha o pacote perfeito e comece a jogar!</p>
+        </div>
+
+        <div class="info-box">
+            <h4>💡 Como funciona?</h4>
+            <p>Selecione o pacote desejado, escolha seu método de pagamento (PIX ou Cartão) e os créditos serão adicionados instantaneamente à sua conta!</p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-buttons">
+            <button class="filter-btn active" onclick="filterProducts('todos')">Todos</button>
+            <button class="filter-btn" onclick="filterProducts('creditos')">💚 Créditos</button>
+            <button class="filter-btn" onclick="filterProducts('premium')">⭐ Premium</button>
+            <button class="filter-btn" onclick="filterProducts('bundle')">📦 Pacotes</button>
+        </div>
+
+        <!-- Seção de Créditos Básicos -->
+        <div class="store-section" data-category="creditos">
+            <div class="section-title">💚 Pacotes de Créditos</div>
+            <div class="products-grid">
+                <!-- Créditos Pequeno -->
+                <div class="product-card">
+                    <div class="product-icon">💚</div>
+                    <div class="product-amount">50</div>
+                    <div class="product-label">Créditos Rio Rise</div>
+                    <div class="product-description">Pacote pequeno perfeito para começar</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 50 créditos</li>
+                            <li>✓ Entrega instantânea</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 50,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Créditos Rio Rise', 50, 'R$ 50,00')">Comprar</button>
+                </div>
+
+                <!-- Créditos Médio -->
+                <div class="product-card">
+                    <div class="badge">💡 Popular</div>
+                    <div class="product-icon">💚</div>
+                    <div class="product-amount">150</div>
+                    <div class="product-label">Créditos Rio Rise</div>
+                    <div class="product-description">Melhor custo benefício! +25% de bônus</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 150 créditos</li>
+                            <li>✓ Entrega instantânea</li>
+                            <li>✓ +15 créditos de bônus</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 130,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Créditos Rio Rise x150', 150, 'R$ 130,00')">Comprar</button>
+                </div>
+
+                <!-- Créditos Grande -->
+                <div class="product-card">
+                    <div class="product-icon">💚</div>
+                    <div class="product-amount">500</div>
+                    <div class="product-label">Créditos Rio Rise</div>
+                    <div class="product-description">Desconto de 25%! Melhor para jogadores sérios</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 500 créditos</li>
+                            <li>✓ +60 créditos de bônus</li>
+                            <li>✓ Entrega instantânea</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 375,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Créditos Rio Rise x500', 500, 'R$ 375,00')">Comprar</button>
+                </div>
+
+                <!-- Créditos Máximo -->
+                <div class="product-card">
+                    <div class="product-icon">💚</div>
+                    <div class="product-amount">1000</div>
+                    <div class="product-label">Créditos Rio Rise</div>
+                    <div class="product-description">Mega pacote! Desconto de 33%</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 1000 créditos</li>
+                            <li>✓ +150 créditos de bônus</li>
+                            <li>✓ Entrega instantânea</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 670,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Créditos Rio Rise x1000', 1000, 'R$ 670,00')">Comprar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção Premium -->
+        <div class="store-section" data-category="premium">
+            <div class="section-title">⭐ Pacotes Premium</div>
+            <div class="products-grid">
+                <!-- Premium 7 dias -->
+                <div class="product-card featured">
+                    <div class="badge">7 DIAS</div>
+                    <div class="product-icon">⭐</div>
+                    <div class="product-amount">7</div>
+                    <div class="product-label">Dias de Premium</div>
+                    <div class="product-description">Acesso a todas as vantagens premium por uma semana</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 200 créditos</li>
+                            <li>✓ 7 dias de Premium</li>
+                            <li>✓ +50% de XP</li>
+                            <li>✓ Acesso VIP</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 150,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Premium 7 Dias', 150, 'R$ 150,00')">Comprar</button>
+                </div>
+
+                <!-- Premium 30 dias -->
+                <div class="product-card featured">
+                    <div class="badge">💡 MELHOR</div>
+                    <div class="product-icon">⭐</div>
+                    <div class="product-amount">30</div>
+                    <div class="product-label">Dias de Premium</div>
+                    <div class="product-description">1 mês completo de benefícios premium! Economize 35%</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 800 créditos</li>
+                            <li>✓ 30 dias de Premium</li>
+                            <li>✓ +100% de XP</li>
+                            <li>✓ Acesso VIP ilimitado</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 350,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Premium 30 Dias', 350, 'R$ 350,00')">Comprar</button>
+                </div>
+
+                <!-- Premium 90 dias -->
+                <div class="product-card featured">
+                    <div class="badge">90 DIAS</div>
+                    <div class="product-icon">⭐</div>
+                    <div class="product-amount">90</div>
+                    <div class="product-label">Dias de Premium</div>
+                    <div class="product-description">3 meses de experiência premium! Desconto de 50%</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 2000 créditos</li>
+                            <li>✓ 90 dias de Premium</li>
+                            <li>✓ +150% de XP</li>
+                            <li>✓ Acesso VIP permanente</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 800,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Premium 90 Dias', 800, 'R$ 800,00')">Comprar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção Pacotes Especiais -->
+        <div class="store-section" data-category="bundle">
+            <div class="section-title">📦 Pacotes Especiais</div>
+            <div class="products-grid">
+                <!-- Starter Bundle -->
+                <div class="product-card">
+                    <div class="product-icon">🎮</div>
+                    <div class="product-label">Starter Bundle</div>
+                    <div class="product-description">Perfeito para novos jogadores!</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 300 créditos</li>
+                            <li>✓ 7 dias Premium</li>
+                            <li>✓ -30% próximas compras</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 99,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Starter Bundle', 99, 'R$ 99,00')">Comprar</button>
+                </div>
+
+                <!-- Pro Bundle -->
+                <div class="product-card">
+                    <div class="badge">PRO</div>
+                    <div class="product-icon">🏆</div>
+                    <div class="product-label">Pro Bundle</div>
+                    <div class="product-description">Para jogadores experientes</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 1500 créditos</li>
+                            <li>✓ 30 dias Premium</li>
+                            <li>✓ -50% próximas compras</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 399,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Pro Bundle', 399, 'R$ 399,00')">Comprar</button>
+                </div>
+
+                <!-- Ultimate Bundle -->
+                <div class="product-card">
+                    <div class="product-icon">👑</div>
+                    <div class="product-label">Ultimate Bundle</div>
+                    <div class="product-description">O melhor pacote disponível!</div>
+                    <div class="product-benefits">
+                        <ul style="list-style: none;">
+                            <li>✓ 3000 créditos</li>
+                            <li>✓ 90 dias Premium</li>
+                            <li>✓ VIP permanente</li>
+                        </ul>
+                    </div>
+                    <div class="product-price">R$ 999,00</div>
+                    <button class="btn-buy" onclick="comprarProduto('Ultimate Bundle', 999, 'R$ 999,00')">Comprar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formas de Pagamento -->
+        <div class="payment-methods">
+            <h3>💳 Formas de Pagamento</h3>
+            <div class="payment-options">
+                <div class="payment-option" onclick="selecionarPagamento('pix')">
+                    <div class="payment-option-icon">📱</div>
+                    <div class="payment-option-name">PIX</div>
+                    <div class="payment-option-desc">Instantâneo e seguro</div>
+                </div>
+                <div class="payment-option" onclick="selecionarPagamento('cartao')">
+                    <div class="payment-option-icon">💳</div>
+                    <div class="payment-option-name">Cartão de Crédito</div>
+                    <div class="payment-option-desc">Débito ou Crédito</div>
+                </div>
+                <div class="payment-option" onclick="selecionarPagamento('boleto')">
+                    <div class="payment-option-icon">📄</div>
+                    <div class="payment-option-name">Boleto Bancário</div>
+                    <div class="payment-option-desc">Até 3 dias úteis</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Rápida -->
+        <div class="info-box">
+            <h4>❓ Perguntas Frequentes</h4>
+            <p><strong>Os créditos expiram?</strong> Não! Seus créditos nunca expiram e podem ser usados quando quiser.</p>
+            <p style="margin-top: 10px;"><strong>Quando recebo?</strong> PIX é instantâneo. Cartão leva até 24 horas (geralmente minutos).</p>
+            <p style="margin-top: 10px;"><strong>Seguro?</strong> Sim! Usamos Mercado Pago, a maior plataforma de pagamentos do Brasil.</p>
+        </div>
+    </div>
+
+    <script>
+        let produtoSelecionado = null;
+        let metodoPagamento = null;
+
+        function filterProducts(categoria) {
+            // Atualizar botões
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Mostrar/ocultar seções
+            document.querySelectorAll('.store-section').forEach(section => {
+                const cat = section.getAttribute('data-category');
+                if (categoria === 'todos' || cat === categoria) {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        }
+
+        function comprarProduto(nome, valor, preco) {
+            produtoSelecionado = { nome, valor, preco };
+            
+            // Simular adição ao carrinho
+            let carrinho = JSON.parse(localStorage.getItem('cartItems')) || [];
+            carrinho.push({
+                produto: nome,
+                preco: parseFloat(preco.replace('R$ ', '').replace(',', '.')),
+                quantidade: 1
+            });
+            localStorage.setItem('cartItems', JSON.stringify(carrinho));
+
+            // Mostrar confirmação
+            alert(`✅ ${nome} adicionado ao carrinho!\n\nValor: ${preco}\n\nVá para Pagamento para continuar.`);
+            
+            // Redirecionar para pagamento
+            setTimeout(() => {
+                window.location.href = 'index.html#pagamento';
+            }, 500);
+        }
+
+        function selecionarPagamento(metodo) {
+            metodoPagamento = metodo;
+            
+            // Atualizar visual
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.style.borderColor = 'var(--border)';
+                opt.style.backgroundColor = 'var(--primary)';
+            });
+            event.currentTarget.style.borderColor = 'var(--accent)';
+            event.currentTarget.style.backgroundColor = 'rgba(83, 204, 6, 0.1)';
+            
+            alert(`Método de pagamento selecionado: ${metodo.toUpperCase()}`);
+        }
+
+        // Efeito de entrada
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.product-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.animation = `fadeInUp 0.5s ease-out ${index * 0.1}s forwards`;
+            });
+        });
+
+        // Adicionar animação
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

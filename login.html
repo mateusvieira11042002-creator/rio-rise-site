@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Rio Rise - Simulador de Vida Brasil</title>
+    <style>
+        :root {
+            --accent: #53cc06;
+            --primary-color: #000;
+            --text-color: #fff;
+            --border-color: #333;
+            --error-color: #ff4444;
+            --success-color: #53cc06;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ddd;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #1a1a1a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: #222;
+            box-shadow: 0 0 0 3px rgba(83, 204, 6, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #666;
+        }
+
+        .form-error {
+            color: var(--error-color);
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--error-color);
+        }
+
+        .form-control.is-invalid ~ .form-error {
+            display: block;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .forgot-password {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: #7dd42f;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, var(--accent), #3d9207);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(83, 204, 6, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            gap: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border-color);
+        }
+
+        .btn-social {
+            width: 100%;
+            padding: 10px;
+            background-color: #1a1a1a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .btn-social:hover {
+            background-color: #222;
+            border-color: var(--accent);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .login-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .login-footer a:hover {
+            color: #7dd42f;
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-error {
+            background-color: rgba(255, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .alert-success {
+            background-color: rgba(83, 204, 6, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 14px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                max-width: 100%;
+            }
+
+            .login-header {
+                margin-bottom: 30px;
+            }
+
+            .login-logo {
+                font-size: 36px;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="login-logo">🚗 Rio Rise</div>
+            <h1 class="login-title">Bem-vindo!</h1>
+            <p class="login-subtitle">Acesse sua conta ou crie uma nova</p>
+        </div>
+
+        <div class="alert alert-error" id="errorAlert"></div>
+        <div class="alert alert-success" id="successAlert"></div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login-tab')">Login</button>
+            <button class="tab" onclick="switchTab('register-tab')">Cadastro</button>
+        </div>
+
+        <!-- Login Tab -->
+        <div id="login-tab" class="tab-content active">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="form-control" placeholder="seu@email.com" required>
+                    <div class="form-error">Email inválido</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Senha</label>
+                    <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+                    <div class="form-error">Senha incorreta</div>
+                </div>
+
+                <div class="remember-forgot">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Lembrar-me</span>
+                    </label>
+                    <a href="recuperar-senha.html" class="forgot-password">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Entrar</button>
+            </form>
+
+            <div class="login-divider">ou</div>
+
+            <button class="btn-social" onclick="loginWithGoogle()">
+                🔵 Entrar com Google
+            </button>
+            <button class="btn-social" onclick="loginWithFacebook()">
+                👍 Entrar com Facebook
+            </button>
+        </div>
+
+        <!-- Register Tab -->
+        <div id="register-tab" class="tab-content">
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label" for="registerName">Nome Completo</label>
+                    <input type="text" id="registerName" class="form-control" placeholder="Seu Nome" required>
+                    <div class="form-error">Nome é obrigatório</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" class="form-control" placeholder="seu@email.com" required>
+                    <div class="form-error">Email inválido ou já cadastrado</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="registerPassword">Senha</label>
+                    <input type="password" id="registerPassword" class="form-control" placeholder="••••••••" required>
+                    <div class="form-error">Senha deve ter pelo menos 8 caracteres</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="registerPasswordConfirm">Confirmar Senha</label>
+                    <input type="password" id="registerPasswordConfirm" class="form-control" placeholder="••••••••" required>
+                    <div class="form-error">Senhas não correspondem</div>
+                </div>
+
+                <label class="checkbox-group" style="margin-bottom: 20px;">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <span>Concordo com os <a href="termos-servico.html" style="color: var(--accent); text-decoration: none;">Termos de Serviço</a></span>
+                </label>
+
+                <button type="submit" class="btn-login">Criar Conta</button>
+            </form>
+
+            <div class="login-divider">ou</div>
+
+            <button class="btn-social" onclick="registerWithGoogle()">
+                🔵 Cadastrar com Google
+            </button>
+            <button class="btn-social" onclick="registerWithFacebook()">
+                👍 Cadastrar com Facebook
+            </button>
+        </div>
+
+        <div class="login-footer">
+            Ao continuar, você concorda com nossa <a href="politica-privacidade.html">Política de Privacidade</a>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = type === 'error' ? document.getElementById('errorAlert') : document.getElementById('successAlert');
+            alertDiv.textContent = message;
+            alertDiv.classList.add('show');
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 4000);
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Simple validation (in production, this would be server-side)
+            if (!email || !password) {
+                showAlert('Por favor, preencha todos os campos', 'error');
+                return;
+            }
+
+            // Simulate login (replace with actual API call)
+            const users = JSON.parse(localStorage.getItem('rioRiseUsers')) || {};
+            
+            if (users[email] && users[email].password === password) {
+                // Login successful
+                const user = users[email];
+                localStorage.setItem('rioRiseCurrentUser', JSON.stringify({
+                    email: email,
+                    name: user.name,
+                    createdAt: user.createdAt
+                }));
+                showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'minha-conta.html';
+                }, 1500);
+            } else {
+                showAlert('Email ou senha incorretos', 'error');
+            }
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+
+            // Validation
+            if (!name || !email || !password) {
+                showAlert('Por favor, preencha todos os campos', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showAlert('Senha deve ter pelo menos 8 caracteres', 'error');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                showAlert('Senhas não correspondem', 'error');
+                return;
+            }
+
+            if (!agreeTerms) {
+                showAlert('Você precisa concordar com os Termos de Serviço', 'error');
+                return;
+            }
+
+            // Check if email already exists
+            const users = JSON.parse(localStorage.getItem('rioRiseUsers')) || {};
+            if (users[email]) {
+                showAlert('Email já cadastrado', 'error');
+                return;
+            }
+
+            // Register user
+            users[email] = {
+                name: name,
+                password: password,
+                createdAt: new Date().toISOString(),
+                balance: 0,
+                purchases: []
+            };
+
+            localStorage.setItem('rioRiseUsers', JSON.stringify(users));
+            localStorage.setItem('rioRiseCurrentUser', JSON.stringify({
+                email: email,
+                name: name,
+                createdAt: new Date().toISOString()
+            }));
+
+            showAlert('Cadastro realizado com sucesso! Redirecionando...', 'success');
+            setTimeout(() => {
+                window.location.href = 'minha-conta.html';
+            }, 1500);
+        }
+
+        function loginWithGoogle() {
+            showAlert('Integração com Google em breve', 'error');
+        }
+
+        function loginWithFacebook() {
+            showAlert('Integração com Facebook em breve', 'error');
+        }
+
+        function registerWithGoogle() {
+            showAlert('Integração com Google em breve', 'error');
+        }
+
+        function registerWithFacebook() {
+            showAlert('Integração com Facebook em breve', 'error');
+        }
+    </script>
+</body>
+</html>

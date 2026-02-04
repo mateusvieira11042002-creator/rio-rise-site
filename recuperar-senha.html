@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha | Rio Rise</title>
+    <style>
+        :root {
+            --accent: #53cc06;
+            --primary-color: #000;
+            --text-color: #fff;
+            --border-color: #333;
+            --error-color: #ff4444;
+            --success-color: #53cc06;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #ddd;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: #1a1a1a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: #222;
+            box-shadow: 0 0 0 3px rgba(83, 204, 6, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, var(--accent), #3d9207);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(83, 204, 6, 0.3);
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 20px;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .btn-back:hover {
+            color: #7dd42f;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-error {
+            background-color: rgba(255, 68, 68, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .alert-success {
+            background-color: rgba(83, 204, 6, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Recuperar Senha</h1>
+            <p>Siga as etapas para recuperar sua conta</p>
+        </div>
+
+        <div class="alert alert-error" id="errorAlert"></div>
+        <div class="alert alert-success" id="successAlert"></div>
+
+        <!-- Step 1: Email -->
+        <div id="step1" class="step active">
+            <form onsubmit="handleStep1(event)">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email cadastrado</label>
+                    <input type="email" id="email" class="form-control" placeholder="seu@email.com" required>
+                </div>
+                <button type="submit" class="btn-submit">Próximo</button>
+                <a href="login.html" class="btn-back">← Voltar ao login</a>
+            </form>
+        </div>
+
+        <!-- Step 2: Verification -->
+        <div id="step2" class="step">
+            <form onsubmit="handleStep2(event)">
+                <p style="margin-bottom: 20px; color: #999;">
+                    Enviamos um código de verificação para <strong id="emailDisplay"></strong>
+                </p>
+                <div class="form-group">
+                    <label class="form-label" for="verificationCode">Código de Verificação</label>
+                    <input type="text" id="verificationCode" class="form-control" placeholder="000000" maxlength="6" required>
+                </div>
+                <button type="submit" class="btn-submit">Verificar</button>
+                <button type="button" class="btn-submit" style="background: #333; color: #fff; margin-top: 10px;" onclick="goToStep1()">
+                    ← Voltar
+                </button>
+            </form>
+        </div>
+
+        <!-- Step 3: New Password -->
+        <div id="step3" class="step">
+            <form onsubmit="handleStep3(event)">
+                <div class="form-group">
+                    <label class="form-label" for="newPassword">Nova Senha</label>
+                    <input type="password" id="newPassword" class="form-control" placeholder="••••••••" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Confirmar Senha</label>
+                    <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit">Redefinir Senha</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentEmail = '';
+        let verificationCode = Math.random().toString().substr(2, 6);
+
+        function showAlert(message, type) {
+            const alertDiv = type === 'error' ? document.getElementById('errorAlert') : document.getElementById('successAlert');
+            alertDiv.textContent = message;
+            alertDiv.classList.add('show');
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 4000);
+        }
+
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+        }
+
+        function goToStep1() {
+            goToStep(1);
+        }
+
+        function handleStep1(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+
+            // Check if user exists
+            const users = JSON.parse(localStorage.getItem('rioRiseUsers')) || {};
+            
+            if (!users[email]) {
+                showAlert('Email não encontrado. Verifique e tente novamente.', 'error');
+                return;
+            }
+
+            currentEmail = email;
+            verificationCode = Math.random().toString().substr(2, 6); // Generate new code
+            
+            // Show verification code in console (in production, this would be sent via email)
+            console.log(`Verification Code: ${verificationCode}`);
+            console.log(`For testing, use this code: ${verificationCode}`);
+            
+            document.getElementById('emailDisplay').textContent = email;
+            showAlert(`Código enviado para ${email}. Por favor, verifique seu email.`, 'success');
+            goToStep(2);
+        }
+
+        function handleStep2(event) {
+            event.preventDefault();
+            const code = document.getElementById('verificationCode').value;
+
+            if (code === verificationCode) {
+                showAlert('Código verificado com sucesso!', 'success');
+                goToStep(3);
+            } else {
+                showAlert('Código inválido. Tente novamente.', 'error');
+            }
+        }
+
+        function handleStep3(event) {
+            event.preventDefault();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword.length < 8) {
+                showAlert('Senha deve ter pelo menos 8 caracteres', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showAlert('Senhas não correspondem', 'error');
+                return;
+            }
+
+            // Update password
+            const users = JSON.parse(localStorage.getItem('rioRiseUsers')) || {};
+            users[currentEmail].password = newPassword;
+            localStorage.setItem('rioRiseUsers', JSON.stringify(users));
+
+            showAlert('Senha redefinida com sucesso! Redirecionando...', 'success');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

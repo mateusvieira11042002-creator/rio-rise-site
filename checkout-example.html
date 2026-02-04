@@ -1,0 +1,414 @@
+<!-- 
+    EXEMPLO DE PÁGINA DE PAGAMENTO
+    Copie este arquivo e customze para suas necessidades
+    Use como referência para adicionar um carrinho de compras
+-->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Meu Site</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .checkout-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .order-summary {
+            background-color: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .payment-methods {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .payment-option {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option:hover,
+        .payment-option.active {
+            border-color: #007bff;
+            background-color: #f0f7ff;
+        }
+
+        .payment-option input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid #ddd;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .discount-code {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .discount-code input {
+            flex: 1;
+        }
+
+        .discount-code button {
+            padding: 0.75rem 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>Meu Site</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="index_novo.html">Home</a></li>
+                    <li><a href="checkout.html">Checkout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="checkout-section">
+        <div class="container">
+            <h1>Checkout</h1>
+            
+            <div class="checkout-container">
+                <!-- RESUMO DO PEDIDO -->
+                <div class="order-summary">
+                    <h2>Resumo do Pedido</h2>
+                    
+                    <div class="product-item">
+                        <span>Produto 1</span>
+                        <span>R$ 99,90</span>
+                    </div>
+                    <div class="product-item">
+                        <span>Produto 2</span>
+                        <span>R$ 149,90</span>
+                    </div>
+
+                    <div class="discount-code">
+                        <input type="text" placeholder="Código de desconto">
+                        <button class="btn btn-secondary" onclick="applyDiscount()">Aplicar</button>
+                    </div>
+
+                    <div class="product-item">
+                        <strong>Subtotal</strong>
+                        <strong id="subtotal">R$ 249,80</strong>
+                    </div>
+
+                    <div class="product-item">
+                        <span>Frete</span>
+                        <span id="shipping">R$ 15,00</span>
+                    </div>
+
+                    <div class="product-item">
+                        <span>Desconto</span>
+                        <span id="discount">R$ 0,00</span>
+                    </div>
+
+                    <div class="total">
+                        <span>Total: </span>
+                        <span id="total">R$ 264,80</span>
+                    </div>
+                </div>
+
+                <!-- FORMULÁRIO DE PAGAMENTO -->
+                <div class="payment-methods">
+                    <h2>Método de Pagamento</h2>
+
+                    <form id="checkout-form" onsubmit="processCheckout(event)">
+                        <!-- SELEÇÃO DE MÉTODO -->
+                        <div class="form-group">
+                            <label>Escolha o método de pagamento:</label>
+
+                            <div class="payment-option">
+                                <input type="radio" name="payment-method" value="pix" checked onchange="updatePaymentMethod(this.value)">
+                                <label>
+                                    <strong>Pix</strong>
+                                    <p style="font-size: 0.9rem; color: #666; margin: 0.5rem 0 0 0;">Transferência instantânea</p>
+                                </label>
+                            </div>
+
+                            <div class="payment-option">
+                                <input type="radio" name="payment-method" value="credit-card" onchange="updatePaymentMethod(this.value)">
+                                <label>
+                                    <strong>Cartão de Crédito</strong>
+                                    <p style="font-size: 0.9rem; color: #666; margin: 0.5rem 0 0 0;">Visa, Mastercard, Elo</p>
+                                </label>
+                            </div>
+
+                            <div class="payment-option">
+                                <input type="radio" name="payment-method" value="boleto" onchange="updatePaymentMethod(this.value)">
+                                <label>
+                                    <strong>Boleto Bancário</strong>
+                                    <p style="font-size: 0.9rem; color: #666; margin: 0.5rem 0 0 0;">Pagamento em dias úteis</p>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- DADOS PESSOAIS -->
+                        <div class="form-group">
+                            <label for="name">Nome Completo *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Telefone *</label>
+                            <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required>
+                        </div>
+
+                        <!-- ENDEREÇO DE ENTREGA -->
+                        <h3 style="margin-top: 2rem;">Endereço de Entrega</h3>
+
+                        <div class="form-group">
+                            <label for="cep">CEP *</label>
+                            <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="address">Rua *</label>
+                            <input type="text" id="address" name="address" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="number">Número *</label>
+                                <input type="text" id="number" name="number" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="complement">Complemento</label>
+                                <input type="text" id="complement" name="complement">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="neighborhood">Bairro *</label>
+                            <input type="text" id="neighborhood" name="neighborhood" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">Cidade *</label>
+                                <input type="text" id="city" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="state">Estado *</label>
+                                <select id="state" name="state" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="SP">São Paulo</option>
+                                    <option value="RJ">Rio de Janeiro</option>
+                                    <option value="MG">Minas Gerais</option>
+                                    <!-- Adicione mais estados -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- INFORMAÇÕES DO CARTÃO (se selecionado) -->
+                        <div id="card-info" style="display: none;">
+                            <h3 style="margin-top: 2rem;">Informações do Cartão</h3>
+
+                            <div class="form-group">
+                                <label for="card-name">Nome no Cartão *</label>
+                                <input type="text" id="card-name" name="card-name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="card-number">Número do Cartão *</label>
+                                <input type="text" id="card-number" name="card-number" placeholder="0000 0000 0000 0000" maxlength="19">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="card-expiry">Validade (MM/AA) *</label>
+                                    <input type="text" id="card-expiry" name="card-expiry" placeholder="12/25" maxlength="5">
+                                </div>
+                                <div class="form-group">
+                                    <label for="card-cvc">CVV *</label>
+                                    <input type="text" id="card-cvc" name="card-cvc" placeholder="123" maxlength="3">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BOTÃO DE ENVIO -->
+                        <button type="submit" class="btn btn-primary btn-checkout">
+                            Finalizar Compra
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Meu Site. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        function updatePaymentMethod(method) {
+            const cardInfo = document.getElementById('card-info');
+            if (method === 'credit-card') {
+                cardInfo.style.display = 'block';
+            } else {
+                cardInfo.style.display = 'none';
+            }
+        }
+
+        function applyDiscount() {
+            alert('Função de desconto será implementada!');
+        }
+
+        function processCheckout(event) {
+            event.preventDefault();
+            
+            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
+            const formData = new FormData(document.getElementById('checkout-form'));
+            
+            const data = {
+                paymentMethod: paymentMethod,
+                customer: {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone')
+                },
+                address: {
+                    cep: formData.get('cep'),
+                    street: formData.get('address'),
+                    number: formData.get('number'),
+                    complement: formData.get('complement'),
+                    neighborhood: formData.get('neighborhood'),
+                    city: formData.get('city'),
+                    state: formData.get('state')
+                },
+                total: 264.80
+            };
+
+            console.log('Dados do pedido:', data);
+            
+            // Aqui você enviaria os dados para seu servidor
+            alert('Pedido enviado com sucesso! ID: ' + Math.random().toString(36).substr(2, 9).toUpperCase());
+        }
+
+        // Máscara para CEP
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.slice(0, 5) + '-' + value.slice(5, 8);
+            }
+            e.target.value = value;
+        });
+
+        // Máscara para telefone
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7, 11);
+            }
+            e.target.value = value;
+        });
+
+        // Máscara para cartão
+        document.getElementById('card-number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+            e.target.value = value;
+        });
+
+        // Máscara para validade
+        document.getElementById('card-expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
